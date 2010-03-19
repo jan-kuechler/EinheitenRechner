@@ -7,6 +7,7 @@
 #define IDS_ABOUTBOX                    101
 #define IDD_EINHEITENRECHNER_DIALOG     102
 #define IDR_MAINFRAME                   128
+#define IDI_ICON1                       130
 #define IDC_EDIT1                       1000
 #define IDC_ED_UNIT1                    1000
 #define IDC_ED_UNIT2                    1001
@@ -23,7 +24,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        129
+#define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1013
 #define _APS_NEXT_SYMED_VALUE           101
