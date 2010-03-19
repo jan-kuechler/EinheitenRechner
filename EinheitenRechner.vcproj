@@ -184,7 +184,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="verbuild version.h *.*.*.+ -xFP"
+				CommandLine="verbuild version.h *.*.*.+ -xFP&#x0D;&#x0A;&quot;C:\Program Files (x86)\NSIS\makensis.exe&quot; /O&quot;Release\Installer.log&quot; install.nis"
 			/>
 		</Configuration>
 	</Configurations>
