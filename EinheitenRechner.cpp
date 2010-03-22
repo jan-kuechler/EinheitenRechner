@@ -25,6 +25,7 @@ END_MESSAGE_MAP()
 // MainApp construction
 
 MainApp::MainApp()
+: lastErr(NULL), hasResult(false)
 {
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
@@ -125,26 +126,54 @@ void MainApp::LoadRules(const char *path)
 	}
 }
 
-const char *MainApp::Convert(const char *unit1, const char *unit2, FormatStyle fmt, bool reduce) const
+bool MainApp::SetUnits(const char *unit1, const char *unit2)
+{
+#define ERR { lastErr = ul_error(); return false; }
+	unit_t u1, u2;
+	if (!ul_parse(unit1, &u1))
+		ERR
+	if (!ul_parse(unit2, &u2))
+		ERR
+	if (!ul_parse(unit1, &u1))
+		ERR
+	if (!ul_parse(unit2, &u2))
+		ERR
+	if (!ul_inverse(&u2))
+		ERR
+	if (!ul_copy(&result, &u1))
+		ERR
+	if (!ul_combine(&result, &u2))
+		ERR
+#undef ERR
+	hasResult = true;
+	return true;
+}
+
+const char *MainApp::Format(FormatStyle fmt, bool reduce) const
 {
 	static char buffer[BUFFER_SIZE];
-	unit_t u1, u2;
-
-	if (!ul_parse(unit1, &u1))
-		return ul_error();
-	if (!ul_parse(unit2, &u2))
-		return ul_error();
-	if (!ul_inverse(&u2))
-		return ul_error();
-	if (!ul_combine(&u1, &u2))
-		return ul_error();
-
 	int fop = 0;
 	if (reduce)
 		fop |= UL_FOP_REDUCE;
 
-	if (!ul_snprint(buffer, BUFFER_SIZE, &u1, format_cast(fmt), fop))
-		return ul_error();
+	if (!ul_snprint(buffer, BUFFER_SIZE, &result, format_cast(fmt), fop)) {
+		lastErr = ul_error();
+		return NULL;
+	}
 
 	return buffer;
+}
+
+bool MainApp::Sqrt()
+{
+	if (!ul_sqrt(&result)) {
+		lastErr = ul_error();
+		return false;
+	}
+	return true;
+}
+
+const char *MainApp::GetError() const
+{
+	return lastErr;
 }

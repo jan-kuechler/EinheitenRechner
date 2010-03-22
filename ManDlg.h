@@ -41,4 +41,11 @@ public:
 	afx_msg void OnBnClickedBtnGo();
 
 	afx_msg void OnBnClickedBtnRules();
+
+private:
+	void DisplayResult();
+	void DisplayError();
+	void ResetResultDisplay();
+public:
+	afx_msg void OnBnClickedBtnSqrt();
 };

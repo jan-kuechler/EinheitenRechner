@@ -89,6 +89,7 @@ BEGIN_MESSAGE_MAP(MainDlg, CDialog)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BTN_GO, &MainDlg::OnBnClickedBtnGo)
 	ON_BN_CLICKED(IDC_BTN_RULES, &MainDlg::OnBnClickedBtnRules)
+	ON_BN_CLICKED(IDC_BTN_SQRT, &MainDlg::OnBnClickedBtnSqrt)
 END_MESSAGE_MAP()
 
 
@@ -197,6 +198,27 @@ MainApp::FormatStyle MainDlg::GetFormatStyle() const
 	return MainApp::FmtPlain;
 }
 
+void MainDlg::DisplayError()
+{
+	edResult.SetWindowText(theApp.GetError());
+}
+
+void MainDlg::ResetResultDisplay()
+{
+	edResult.SetWindowText("");
+}
+
+void MainDlg::DisplayResult()
+{
+	const char *result = theApp.Format(GetFormatStyle(), chkReduce.GetCheck());
+	if (!result) {
+		DisplayError();
+		return;
+	}
+	ResetResultDisplay();
+	edResult.SetWindowText(result);
+}
+
 void MainDlg::OnBnClickedBtnGo()
 {
 	enum { BUFSIZE = 1024 };
@@ -206,7 +228,11 @@ void MainDlg::OnBnClickedBtnGo()
 	edUnit1.GetWindowText(unit1, BUFSIZE);
 	edUnit2.GetWindowText(unit2, BUFSIZE);
 
-	edResult.SetWindowText(theApp.Convert(unit1, unit2, GetFormatStyle(), chkReduce.GetCheck()));
+	if (!theApp.SetUnits(unit1, unit2)) {
+		DisplayError();
+		return;
+	}
+	DisplayResult();
 }
 
 void MainDlg::OnBnClickedBtnRules()
@@ -215,4 +241,14 @@ void MainDlg::OnBnClickedBtnRules()
 
 	if (openDlg.DoModal() == IDOK)
 		theApp.LoadRules(openDlg.GetPathName());
+}
+
+void MainDlg::OnBnClickedBtnSqrt()
+{
+	if (theApp.HasResult()) {
+		if (!theApp.Sqrt())	
+			DisplayError();
+		else
+			DisplayResult();
+	}
 }

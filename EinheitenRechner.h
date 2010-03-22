@@ -9,6 +9,8 @@
 
 #include "resource.h"		// main symbols
 
+#include <unitlib.h>
+
 // MainApp:
 // See EinheitenRechner.cpp for the implementation of this class
 //
@@ -32,10 +34,22 @@ public:
 		FmtPlain, FmtLatexInline, FmtLatexFrac
 	};
 
-	const char *Convert(const char *unit1, const char *unit2, FormatStyle fmt, bool reduce) const;
 	void LoadRules(const char *path);
 
+	bool SetUnits(const char *unit1, const char *unit2);
+	const char *Format(FormatStyle fmt, bool reduce) const;
+	bool Sqrt();
+	const char *GetError() const;
+	bool HasResult() const
+	{
+		return hasResult;
+	}
+
 private:
+	unit_t result;
+	mutable const char *lastErr;
+	bool hasResult;
+
 	void TryLoadRules();
 };
 
