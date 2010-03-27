@@ -2,15 +2,14 @@
 //
 #include "resource.h"
 
+#include "version.h"
+
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#ifndef APSTUDIO_INVOKED
-#include "targetver.h"
-#endif
-#include "afxres.h"
+#include "atlres.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -24,45 +23,6 @@ LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
 #pragma code_page(1252)
 #endif //_WIN32
 
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
-
-1 TEXTINCLUDE 
-BEGIN
-    "resource.h\0"
-END
-
-2 TEXTINCLUDE 
-BEGIN
-    "#ifndef APSTUDIO_INVOKED\r\n"
-    "#include ""targetver.h""\r\n"
-    "#endif\r\n"
-    "#include ""afxres.h""\r\n"
-    "\0"
-END
-
-3 TEXTINCLUDE 
-BEGIN
-    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
-    "#define _AFX_NO_OLE_RESOURCES\r\n"
-    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
-    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
-    "\r\n"
-    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
-    "LANGUAGE 9, 1\r\n"
-    "#pragma code_page(1252)\r\n"
-    "#include ""res\\EinheitenRechner.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
-    "#include ""afxres.rc""     // Standard components\r\n"
-    "#endif\r\n"
-    "\0"
-END
-
-#endif    // APSTUDIO_INVOKED
-
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // Icon
@@ -70,8 +30,68 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "res\\EinheitenRechner.ico"
-IDI_ICON1               ICON                    "atom.ico"
+IDI_ROOT                ICON                    "res\\root.ico"
+IDI_MAINFRAME           ICON                    "res\\EinheitenRechner.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_NEW_RULE DIALOGEX 0, 0, 204, 68
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "EinheitenRechner - Neue Regel"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_ED_RULE,7,23,190,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,46,47,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,108,47,50,14
+    LTEXT           "Bitte geben Sie die Regel ein. Format: ""Symbol = Einheiten""",IDC_STATIC,7,7,190,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_NEW_RULE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 197
+        VERTGUIDE, 46
+        VERTGUIDE, 158
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 61
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDR_MAINFRAME           "EinheitenRechner"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_CONVERT             "Umwandeln"
+    IDS_LOAD_RULES          "Regeln laden..."
+    IDS_NEW_RULE            "Neue Regel"
+    IDS_FMT_PLAIN           "Normal"
+    IDS_FMT_LFRAC           "LaTeX Bruch"
+    IDS_FMT_LINLINE         "LaTeX"
+    IDS_REDUCE              "Einheiten kürzen"
+END
+
 #endif    // German (Germany) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -87,37 +107,46 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\EinheitenRechner.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 170, 66
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Einheiten Rechner"
-FONT 8, "MS Shell Dlg", 0, 0, 0x1
+IDD_ABOUTBOX DIALOG  0, 0, 187, 102
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About"
+FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "Einheiten Rechner, Version 1.0",IDC_STATIC,7,15,114,8,SS_NOPREFIX
-    DEFPUSHBUTTON   "OK",IDOK,113,45,50,14,WS_GROUP
-    LTEXT           "Unitlib: x.yy (a.bb)",IDC_VERSION,7,29,156,8
+    DEFPUSHBUTTON   "OK",IDOK,130,81,50,14
+    CTEXT           "EinheitenRechner Application v1.0\n\n(c) Copyright 2010",IDC_STATIC,25,57,78,32
+    ICON            IDR_MAINFRAME,IDC_STATIC,55,26,18,20
+    GROUPBOX        "",IDC_STATIC,7,7,115,88
 END
 
-IDD_EINHEITENRECHNER_DIALOG DIALOGEX 0, 0, 368, 70
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_APPWINDOW
-CAPTION "Einheiten Rechner"
-FONT 8, "MS Shell Dlg", 0, 0, 0x1
+IDD_MAINDLG DIALOGEX 0, 0, 371, 69
+STYLE DS_SETFONT | WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU
+CAPTION "kl"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    CONTROL         "Normal",IDC_RD_FMT_PLAIN,"Button",BS_AUTORADIOBUTTON | WS_GROUP,229,19,38,10
-    CONTROL         "LaTeX",IDC_RD_FMT_LATEX_INLINE,"Button",BS_AUTORADIOBUTTON,229,32,35,10
-    CONTROL         "LaTeX Bruch",IDC_RD_FMT_LATEX_FRAC,"Button",BS_AUTORADIOBUTTON,229,45,55,10
-    GROUPBOX        "Ausgabeformat",IDC_STATIC,225,6,65,56
-    PUSHBUTTON      "&Beenden",IDOK,322,48,39,14
-    EDITTEXT        IDC_ED_UNIT1,7,6,210,14,ES_AUTOHSCROLL
-    EDITTEXT        IDC_ED_UNIT2,7,27,210,14,ES_AUTOHSCROLL
-    EDITTEXT        IDC_ED_RESULT,7,48,132,14,ES_AUTOHSCROLL | ES_READONLY
-    DEFPUSHBUTTON   "&Umwandeln",IDC_BTN_GO,173,48,44,14
-    PUSHBUTTON      "Regeln laden...",IDC_BTN_RULES,298,27,63,14
-    CONTROL         "Einheiten kürzen",IDC_CHK_REDUCE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,298,14,63,10
-    PUSHBUTTON      "Wurzel",IDC_BTN_SQRT,139,48,31,14,BS_NOTIFY
+    CONTROL         "Normal",IDC_RD_PLAIN,"Button",BS_AUTORADIOBUTTON | WS_GROUP,296,17,38,10
+    CONTROL         "LaTeX Bruch",IDC_RD_LFRAC,"Button",BS_AUTORADIOBUTTON,296,28,58,10
+    CONTROL         "LaTeX",IDC_RD_LINLINE,"Button",BS_AUTORADIOBUTTON,296,39,37,10
+    CONTROL         "Einheiten kürzen",IDC_CHK_REDUCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,296,50,65,10
+    EDITTEXT        IDC_ED_UNIT1,7,7,218,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_ED_UNIT2,7,26,217,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_ED_RESULT,7,46,200,14,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      " ",IDC_BTN_SQRT,208,47,17,15
+    DEFPUSHBUTTON   "Umwandeln",IDC_BTN_CONVERT,229,47,56,14
+    GROUPBOX        "Ausgabe",IDC_STATIC,292,7,72,55
+    PUSHBUTTON      "Neue Regel",IDC_BTN_NEW_RULE,229,7,56,14
+    PUSHBUTTON      "Regeln laden...",IDC_BTN_LOAD_RULES,229,27,56,14
 END
 
 
@@ -127,61 +156,132 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 163
+        RIGHTMARGIN, 180
         TOPMARGIN, 7
-        BOTTOMMARGIN, 59
+        BOTTOMMARGIN, 95
     END
 
-    IDD_EINHEITENRECHNER_DIALOG, DIALOG
+    IDD_MAINDLG, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 361
-        VERTGUIDE, 217
-        TOPMARGIN, 6
+        RIGHTMARGIN, 364
+        TOPMARGIN, 7
         BOTTOMMARGIN, 62
-        HORZGUIDE, 62
     END
 END
 #endif    // APSTUDIO_INVOKED
 
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE
+BEGIN
+    "#include ""atlres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE
+BEGIN
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS
+BEGIN
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL
+    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT
+END
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDS_ABOUTBOX            "&About EinheitenRechner..."
+    IDR_MAINFRAME           "Units"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_CONVERT             "Convert"
+    IDS_LOAD_RULES          "Load Rules..."
+    IDS_NEW_RULE            "New Rule"
+    IDS_FMT_PLAIN           "Normal"
+    IDS_FMT_LFRAC           "LaTeX Frac"
+    IDS_FMT_LINLINE         "LaTeX"
+    IDS_REDUCE              "Shorten units"
 END
 
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
-
-
-#ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
-// Generated from the TEXTINCLUDE 3 resource.
+// Version
 //
-#define _AFX_NO_SPLITTER_RESOURCES
-#define _AFX_NO_OLE_RESOURCES
-#define _AFX_NO_TRACKER_RESOURCES
-#define _AFX_NO_PROPERTY_RESOURCES
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-LANGUAGE 9, 1
-#pragma code_page(1252)
-#include "res\EinheitenRechner.rc2"  // non-Microsoft Visual C++ edited resources
-#include "afxres.rc"     // Standard components
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION VERSION_RC_PLAIN
+ PRODUCTVERSION VERSION_RC_PLAIN
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
 #endif
-
-/////////////////////////////////////////////////////////////////////////////
-#endif    // not APSTUDIO_INVOKED
-
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "FileDescription", "EinheitenRechner Module"
+            VALUE "FileVersion", VERSION_RC_STR
+            VALUE "InternalName", "EinheitenRechner"
+            VALUE "LegalCopyright", "Copyright 2010"
+            VALUE "OriginalFilename", "EinheitenRechner.exe"
+            VALUE "ProductName", "EinheitenRechner Module"
+            VALUE "ProductVersion", VERSION_RC_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

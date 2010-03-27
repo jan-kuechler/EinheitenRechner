@@ -3,9 +3,8 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="EinheitenRechner"
-	ProjectGUID="{E32D9519-58DA-4EA7-B48E-85C10CAFD7D4}"
+	ProjectGUID="{CC67697E-30C0-46D9-9BDD-E9A49B7E798A}"
 	RootNamespace="EinheitenRechner"
-	Keyword="MFCProj"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -18,15 +17,14 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
 			ConfigurationType="1"
-			UseOfMFC="2"
+			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="verbuild version.h -c"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -41,15 +39,21 @@
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="_DEBUG"
 				MkTypLibCompatible="false"
-				ValidateParameters="true"
+				TargetEnvironment="1"
+				GenerateStublessProxies="true"
+				TypeLibraryName="$(IntDir)/EinheitenRechner.tlb"
+				HeaderFileName="EinheitenRechner.h"
+				DLLDataFileName=""
+				InterfaceIdentifierFileName="EinheitenRechner_i.c"
+				ProxyFileName="EinheitenRechner_p.c"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS=1"
+				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				DebugInformationFormat="4"
@@ -69,8 +73,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libunit.lib"
-				ShowProgress="0"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -80,7 +83,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -96,20 +98,20 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="lua vertools.lua inc build"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
 			ConfigurationType="1"
-			UseOfMFC="2"
+			UseOfATL="0"
+			ATLMinimizesCRunTimeLibraryUsage="true"
 			CharacterSet="0"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="verbuild version.h -c"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -124,19 +126,22 @@
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="NDEBUG"
 				MkTypLibCompatible="false"
-				ValidateParameters="true"
+				TargetEnvironment="1"
+				GenerateStublessProxies="true"
+				TypeLibraryName="$(IntDir)/EinheitenRechner.tlb"
+				HeaderFileName="EinheitenRechner.h"
+				DLLDataFileName=""
+				InterfaceIdentifierFileName="EinheitenRechner_i.c"
+				ProxyFileName="EinheitenRechner_p.c"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
-				EnableIntrinsicFunctions="true"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS=1"
-				MinimalRebuild="false"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
+				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;NDEBUG"
+				ExceptionHandling="0"
+				RuntimeLibrary="0"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -153,14 +158,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libunit.lib"
-				ShowProgress="0"
 				LinkIncremental="1"
-				GenerateDebugInformation="true"
 				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				RandomizedBaseAddress="2"
-				DataExecutionPrevention="2"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -168,7 +167,6 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				AdditionalManifestFiles="manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -184,7 +182,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="verbuild version.h *.*.*.+ -xFP&#x0D;&#x0A;&quot;C:\Program Files (x86)\NSIS\makensis.exe&quot; /O&quot;Release\Installer.log&quot; install.nis"
+				CommandLine="lua vertools.lua inc build&#x0D;&#x0A;lua vertools.lua write_version installer.tpl installer.nis&#x0D;&#x0A;&quot;C:\Program Files (x86)\NSIS\makensis.exe&quot; /O&quot;Release\installer.log&quot; installer.nis&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -193,8 +191,7 @@
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
 			>
 			<File
 				RelativePath=".\EinheitenRechner.cpp"
@@ -202,6 +199,10 @@
 			</File>
 			<File
 				RelativePath=".\MainDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NewRuleDlg.cpp"
 				>
 			</File>
 			<File
@@ -227,39 +228,29 @@
 		</Filter>
 		<Filter
 			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			Filter="h;hpp;hxx;hm;inl;inc"
 			>
 			<File
-				RelativePath=".\EinheitenRechner.h"
+				RelativePath=".\MainDlg.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ManDlg.h"
+				RelativePath=".\NewRuleDlg.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Resource.h"
+				RelativePath=".\resource.h"
 				>
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
-			<File
-				RelativePath=".\targetver.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;jpg;jpeg;jpe;manifest"
 			>
-			<File
-				RelativePath=".\atom.ico"
-				>
-			</File>
 			<File
 				RelativePath=".\res\EinheitenRechner.ico"
 				>
@@ -269,23 +260,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\EinheitenRechner.rc2"
-				>
-			</File>
-			<File
-				RelativePath=".\res\icon1.ico"
+				RelativePath=".\res\root.ico"
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\ReadMe.txt"
-			>
-		</File>
 	</Files>
 	<Globals>
-		<Global
-			Name="RESOURCE_FILE"
-			Value="EinheitenRechner.rc"
-		/>
 	</Globals>
 </VisualStudioProject>

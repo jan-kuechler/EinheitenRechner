@@ -1,254 +1,164 @@
-// MainDlg.cpp : implementation file
+// MainDlg.cpp : implementation of the CMainDlg class
 //
+/////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include "EinheitenRechner.h"
-#include "ManDlg.h"
+#include "resource.h"
+
+#include "MainDlg.h"
+#include "NewRuleDlg.h"
 
 #include <unitlib.h>
-#include "afxwin.h"
-
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
 
 
-// CAboutDlg dialog used for App About
+CMainDlg::CMainDlg()
+: hasResult(false),
+  chkReduce(false), rdFormat(0)
+{ }
 
-class CAboutDlg : public CDialog
+LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
-public:
-	CAboutDlg();
+	// center the dialog on the screen
+	CenterWindow();
 
-// Dialog Data
-	enum { IDD = IDD_ABOUTBOX };
+	// set icons
+	HICON hIcon = (HICON)::LoadImage(_Module.GetResourceInstance(), MAKEINTRESOURCE(IDR_MAINFRAME), 
+		IMAGE_ICON, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON), LR_DEFAULTCOLOR);
+	SetIcon(hIcon, TRUE);
+	HICON hIconSmall = (HICON)::LoadImage(_Module.GetResourceInstance(), MAKEINTRESOURCE(IDR_MAINFRAME), 
+		IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR);
+	SetIcon(hIconSmall, FALSE);
 
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	DoDataExchange(false); // initialize DDX
 
-// Implementation
-protected:
-	DECLARE_MESSAGE_MAP()
+	// title (dynamic version and compiled version of unitlib)
+	SetWindowText(CString("EinheitenRechner - ") + ul_get_name() + " (" + UL_VERSION + ")" );
 
-	virtual BOOL OnInitDialog();
-};
+	// disable the sqrt button
+	HasResult(false);
+	// and give it an icon
+	CButton btnSqrt(GetDlgItem(IDC_BTN_SQRT));
+	btnSqrt.SetIcon((HICON)LoadImage(_Module.m_hInst, MAKEINTRESOURCE(IDI_ROOT), IMAGE_ICON, 16, 16, 0));
 
-CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
-{
+	return TRUE;
 }
 
-void CAboutDlg::DoDataExchange(CDataExchange* pDX)
+LRESULT CMainDlg::OnCancel(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	CDialog::DoDataExchange(pDX);
+	EndDialog(wID);
+	return 0;
 }
 
-BOOL CAboutDlg::OnInitDialog()
+LRESULT CMainDlg::OnConvert(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	BOOL rs = CDialog::OnInitDialog();
+	DoDataExchange(DDX_PULL);
 
-	CString ulv = "Unitlib: ";
-	ulv += ul_get_version();
-	ulv += " (";
-	ulv += UL_VERSION;
-	ulv += ")";
+	unit_t u1, u2;
 
-	SetDlgItemText(IDC_VERSION, ulv);
-	return rs;
+
+	if (!ul_parse(edUnit1, &u1)) {
+		DisplayError();
+		return 0;
+	}
+	if (!ul_parse(edUnit2, &u2)) {
+		DisplayError();
+		return 0;
+	}
+	if (!ul_copy(&result, &u1)) {
+		DisplayError();
+		return 0;
+	}
+	if (!ul_inverse(&u2)) {
+		DisplayError();
+		return 0;
+	}
+	if (!ul_combine(&result, &u2)) {
+		DisplayError();
+		return 0;
+	}
+
+	DisplayResult();
+	return 0;
 }
 
-BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
-END_MESSAGE_MAP()
-
-
-// MainDlg dialog
-
-
-
-
-MainDlg::MainDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(MainDlg::IDD, pParent)
+LRESULT CMainDlg::OnSqrt(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	if (!ul_sqrt(&result))
+		DisplayError();
+	else
+		DisplayResult();
+	return 0;
 }
 
-void MainDlg::DoDataExchange(CDataExchange* pDX)
+LRESULT CMainDlg::OnNewRule(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_ED_UNIT1, edUnit1);
-	DDX_Control(pDX, IDC_ED_UNIT2, edUnit2);
-	DDX_Control(pDX, IDC_ED_RESULT, edResult);
-	DDX_Control(pDX, IDC_CHK_REDUCE, chkReduce);
-	//DDX_Radio(pDX, IDC_RD_FMT_PLAIN, rdFormat); // added manually
-	DDX_Control(pDX, IDC_RD_FMT_PLAIN, rdFmt);
-}
+	CNewRuleDlg dlg;
 
-BEGIN_MESSAGE_MAP(MainDlg, CDialog)
-	ON_WM_SYSCOMMAND()
-	ON_WM_PAINT()
-	ON_WM_QUERYDRAGICON()
-	//}}AFX_MSG_MAP
-	ON_BN_CLICKED(IDC_BTN_GO, &MainDlg::OnBnClickedBtnGo)
-	ON_BN_CLICKED(IDC_BTN_RULES, &MainDlg::OnBnClickedBtnRules)
-	ON_BN_CLICKED(IDC_BTN_SQRT, &MainDlg::OnBnClickedBtnSqrt)
-END_MESSAGE_MAP()
-
-
-// MainDlg message handlers
-
-BOOL MainDlg::OnInitDialog()
-{
-	CDialog::OnInitDialog();
-
-	// Add "About..." menu item to system menu.
-
-	// IDM_ABOUTBOX must be in the system command range.
-	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
-	ASSERT(IDM_ABOUTBOX < 0xF000);
-
-	CMenu* pSysMenu = GetSystemMenu(FALSE);
-	if (pSysMenu != NULL)
-	{
-		CString strAboutMenu;
-		strAboutMenu.LoadString(IDS_ABOUTBOX);
-		if (!strAboutMenu.IsEmpty())
-		{
-			pSysMenu->AppendMenu(MF_SEPARATOR);
-			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
+	if (dlg.DoModal() == IDOK) {
+		if (!ul_parse_rule(dlg.GetRule())) {
+			DisplayError();
+		}
+		else {
+			DisplayText(_T("Regel geladen"));
 		}
 	}
-
-	// Set the icon for this dialog.  The framework does this automatically
-	//  when the application's main window is not a dialog
-	SetIcon(m_hIcon, TRUE);			// Set big icon
-	SetIcon(m_hIcon, FALSE);		// Set small icon
-
-	// TODO: Add extra initialization here
-
-	CButton *defaultRadio = static_cast<CButton*>(GetDlgItem(IDC_RD_FMT_PLAIN));
-	defaultRadio->SetCheck(true);
-
-	SetWindowText(CString("Einheiten Rechner - ") + ul_get_name());
-
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return 0;
 }
 
-void MainDlg::OnSysCommand(UINT nID, LPARAM lParam)
+LRESULT CMainDlg::OnLoadRules(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
-	{
-		CAboutDlg dlgAbout;
-		dlgAbout.DoModal();
+	CFileDialog dlg(true);
+	if (dlg.DoModal() == IDOK) {
+		LoadRules(dlg.m_szFileName);
 	}
+
+	return 0;
+}
+
+void CMainDlg::LoadRules(const CString& path)
+{
+	if (!ul_load_rules(path))
+		DisplayError();
 	else
-	{
-		CDialog::OnSysCommand(nID, lParam);
-	}
+		DisplayText(path + " geladen");
 }
 
-// If you add a minimize button to your dialog, you will need the code below
-//  to draw the icon.  For MFC applications using the document/view model,
-//  this is automatically done for you by the framework.
-
-void MainDlg::OnPaint()
+void CMainDlg::DisplayError()
 {
-	if (IsIconic())
-	{
-		CPaintDC dc(this); // device context for painting
-
-		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
-
-		// Center icon in client rectangle
-		int cxIcon = GetSystemMetrics(SM_CXICON);
-		int cyIcon = GetSystemMetrics(SM_CYICON);
-		CRect rect;
-		GetClientRect(&rect);
-		int x = (rect.Width() - cxIcon + 1) / 2;
-		int y = (rect.Height() - cyIcon + 1) / 2;
-
-		// Draw the icon
-		dc.DrawIcon(x, y, m_hIcon);
-	}
-	else
-	{
-		CDialog::OnPaint();
-	}
+	edResult = ul_error();
+	DoDataExchange(DDX_PUSH);
+	HasResult(false);
 }
 
-// The system calls this function to obtain the cursor to display while the user drags
-//  the minimized window.
-HCURSOR MainDlg::OnQueryDragIcon()
+void CMainDlg::DisplayResult()
 {
-	return static_cast<HCURSOR>(m_hIcon);
-}
+	enum { BUFLEN = 2048 };
+	static char buffer[BUFLEN ];
 
-
-MainApp::FormatStyle MainDlg::GetFormatStyle() const
-{
-	CButton *rdFmtPlain = static_cast<CButton*>(GetDlgItem(IDC_RD_FMT_PLAIN));
-	CButton *rdFmtLatexInline = static_cast<CButton*>(GetDlgItem(IDC_RD_FMT_LATEX_INLINE));
-	CButton *rdFmtLatexFrac = static_cast<CButton*>(GetDlgItem(IDC_RD_FMT_LATEX_FRAC));
-
-	if (rdFmtPlain->GetCheck())
-		return MainApp::FmtPlain;
-	if (rdFmtLatexInline->GetCheck())
-		return MainApp::FmtLatexInline;
-	if (rdFmtLatexFrac->GetCheck())
-		return MainApp::FmtLatexFrac;
-
-	return MainApp::FmtPlain;
-}
-
-void MainDlg::DisplayError()
-{
-	edResult.SetWindowText(theApp.GetError());
-}
-
-void MainDlg::ResetResultDisplay()
-{
-	edResult.SetWindowText("");
-}
-
-void MainDlg::DisplayResult()
-{
-	const char *result = theApp.Format(GetFormatStyle(), chkReduce.GetCheck());
-	if (!result) {
+	int fops = 0;
+	if (chkReduce)
+		fops |= UL_FOP_REDUCE;
+	
+	if (!ul_snprint(buffer, BUFLEN , &result, static_cast<ul_format_t>(rdFormat), fops)) {
 		DisplayError();
 		return;
 	}
-	ResetResultDisplay();
-	edResult.SetWindowText(result);
+
+	edResult = buffer;
+	DoDataExchange(DDX_PUSH);
+	HasResult(true);
 }
 
-void MainDlg::OnBnClickedBtnGo()
+void CMainDlg::DisplayText(const CString& text)
 {
-	enum { BUFSIZE = 1024 };
-	char unit1[BUFSIZE];
-	char unit2[BUFSIZE];
-
-	edUnit1.GetWindowText(unit1, BUFSIZE);
-	edUnit2.GetWindowText(unit2, BUFSIZE);
-
-	if (!theApp.SetUnits(unit1, unit2)) {
-		DisplayError();
-		return;
-	}
-	DisplayResult();
+	edResult = text;
+	DoDataExchange(DDX_PUSH);
+	HasResult(false);
 }
 
-void MainDlg::OnBnClickedBtnRules()
+void CMainDlg::HasResult(bool has)
 {
-	CFileDialog openDlg(true);
-
-	if (openDlg.DoModal() == IDOK)
-		theApp.LoadRules(openDlg.GetPathName());
-}
-
-void MainDlg::OnBnClickedBtnSqrt()
-{
-	if (theApp.HasResult()) {
-		if (!theApp.Sqrt())	
-			DisplayError();
-		else
-			DisplayResult();
-	}
+	hasResult = has;
+	CWindow btnSqrt(GetDlgItem(IDC_BTN_SQRT));
+	btnSqrt.EnableWindow(hasResult);
 }
